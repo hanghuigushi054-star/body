@@ -3,6 +3,7 @@
 </div>
 
 # Run and deploy your AI Studio app
+※本アプリは、Google AIコースの最終課題として実装した自身初のAIプロジェクトです
 
 
 This contains everything you need to run your app locally.
