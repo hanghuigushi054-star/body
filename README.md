@@ -25,9 +25,9 @@ View your app in AI Studio: https://ai.studio/apps/3b7f0087-5cd8-4874-9bfa-d4690
 ## 概要 (Overview)
 ## 技術スタック (Tech Stack)
 ＊＊フロントエンド:
-＊React: UI構築のメインライブラリ
-＊TypeScript: 安全で堅牢なコード開発
-＊素早く: 高速な開発環境とビルドツール
+React: UI構築のメインライブラリ
+TypeScript: 安全で堅牢なコード開発
+素早く: 高速な開発環境とビルドツール
 ＊＊スタイリング:
 ＊Tailwind CSS: 柔軟でモダンなデザイン
 ＊フレーマーモーション: 流れるようなアニメーション効果
