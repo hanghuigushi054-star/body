@@ -14,6 +14,7 @@ import Dashboard from './components/Dashboard';
 import LogForm from './components/LogForm';
 import SimpleChart from './components/SimpleChart';
 import ProfileSettings from './components/ProfileSettings';
+import TrainingMenuPanel from './components/TrainingMenuPanel';
 import { Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -27,7 +28,9 @@ export default function App() {
     height: 170,
     age: 30,
     gender: 'male',
-    unit: 'kg'
+    unit: 'kg',
+    goal: 'lose_weight',
+    environment: 'home'
   });
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -69,7 +72,7 @@ export default function App() {
               <Heart className="text-orange-500" fill="currentColor" size={24} />
             </div>
           </motion.div>
-          <h1 className="text-2xl font-black text-gray-800 mb-1 tracking-tight">ゆるトレ予想</h1>
+          <h1 className="text-2xl font-black text-gray-800 mb-1 tracking-tight">ゆるトレメイト</h1>
           <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
             AI Personal Weight Trainer
           </p>
@@ -93,9 +96,11 @@ export default function App() {
               <span className="text-lg font-bold">kg</span>
             </div>
             <p className="text-xs font-bold mt-3 bg-white/20 inline-block px-3 py-1 rounded-full backdrop-blur-sm">
-              {logs[logs.length - 1].weight > settings.targetWeight 
-                ? "焦らず、自分のペースで絞っていこう！✨" 
-                : "目標達成おめでとう！素晴らしいキープだね！🎉"}
+              {logs[logs.length - 1].weight <= settings.targetWeight 
+                ? "目標達成おめでとう！素晴らしいキープだね！🎉"
+                : settings.goal === 'just_record'
+                  ? "頑張って！目標までもう少しだよ✨"
+                  : "焦らず、自分のペースでやっていこう！✨"}
             </p>
           </motion.div>
         )}
@@ -108,6 +113,11 @@ export default function App() {
           <ProfileSettings 
             settings={settings} 
             onUpdate={setSettings} 
+          />
+
+          <TrainingMenuPanel 
+            settings={settings} 
+            currentWeight={logs.length > 0 ? logs[logs.length - 1].weight : undefined} 
           />
 
           <LogForm onAddLog={handleAddLog} />

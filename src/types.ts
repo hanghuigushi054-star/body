@@ -30,4 +30,6 @@ export interface UserSettings {
   age: number;
   gender: 'male' | 'female';
   unit: 'kg' | 'lbs';
+  goal: 'lose_weight' | 'build_muscle' | 'maintain' | 'just_record';
+  environment: 'home' | 'gym' | 'none';
 }

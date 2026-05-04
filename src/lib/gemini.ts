@@ -3,6 +3,86 @@ import {DailyLog, AIAnalysis, UserSettings} from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+export interface TrainingMenu {
+  title: string;
+  description: string;
+  exercises: { name: string; reps: string; note: string }[];
+  motivation: string;
+}
+
+export async function proposeTrainingMenu(
+  settings: UserSettings,
+  currentWeight?: number
+): Promise<TrainingMenu> {
+  const model = "gemini-3.1-pro-preview"; // Use the pro preview for better quality if possible or current model
+
+  let bmi = "不明";
+  if (currentWeight && settings.height) {
+    bmi = (currentWeight / Math.pow(settings.height / 100, 2)).toFixed(1);
+  }
+
+  const environmentText = settings.environment === 'home' ? '自宅' : settings.environment === 'gym' ? 'ジム' : '指定なし';
+  const goalText = settings.goal === 'lose_weight' ? '減量' : settings.goal === 'build_muscle' ? '筋肉をつけたい' : '維持したい';
+
+  const systemInstruction = `
+    あなたは「世界一親身で優秀なAIパーソナルトレーナー」です。
+    ユーザーの属性と目的に合わせて、最適なトレーニングメニューを1つ提案してください。
+    
+    出力形式 (JSON):
+    {
+      "title": "メニューのタイトル（例：自宅でできる！燃焼系サーキット）",
+      "description": "なぜこのメニューがおすすめなのかの解説",
+      "exercises": [
+        { "name": "種目名", "reps": "回数や秒数", "note": "気をつけるポイント" }
+      ],
+      "motivation": "ユーザーがやる気になる熱い一言！"
+    }
+  `;
+
+  const prompt = `
+    【ユーザープロフィール】
+    - 目標体重: ${settings.targetWeight} kg
+    - 現在の体重: ${currentWeight ? currentWeight + ' kg' : '未入力'}
+    - 身長: ${settings.height} cm
+    - 年齢: ${settings.age} 歳
+    - 性別: ${settings.gender === 'male' ? '男性' : '女性'}
+    - BMI: ${bmi}
+    
+    【目的と環境】
+    - 目的: ${goalText}
+    - 環境: ${environmentText}
+    
+    このユーザーにぴったりのトレーニングメニューを提案して！
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model,
+      contents: prompt,
+      config: {
+        systemInstruction,
+        responseMimeType: "application/json",
+      },
+    });
+
+    const result = JSON.parse(response.text || "{}");
+    return {
+      title: result.title ?? "おすすめトレーニング",
+      description: result.description ?? "あなたに合わせたメニューです。",
+      exercises: result.exercises ?? [],
+      motivation: result.motivation ?? "今日も頑張りましょう！"
+    };
+  } catch (error) {
+    console.error("AI Training Menu Error:", error);
+    return {
+      title: "通信エラー",
+      description: "現在メニューを取得できません。",
+      exercises: [],
+      motivation: "少し待ってからお試しください！"
+    };
+  }
+}
+
 export async function analyzeMetrics(
   logs: DailyLog[],
   settings: UserSettings

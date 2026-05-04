@@ -135,6 +135,61 @@ export default function ProfileSettings({ settings, onUpdate }: ProfileSettingsP
             </button>
           </div>
         </div>
+
+        {/* 目的 */}
+        <div className="space-y-2 col-span-2">
+          <label className="text-[11px] font-black text-gray-400 flex items-center gap-1.5 uppercase">
+            <Target size={12} className="text-red-400" /> Goal / Purpose
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { id: 'lose_weight', label: '減量したい' },
+              { id: 'build_muscle', label: '筋肉をつけたい' },
+              { id: 'maintain', label: '維持したい' },
+              { id: 'just_record', label: '記録だけしたい' }
+            ].map(goal => (
+              <button
+                key={goal.id}
+                onClick={() => onUpdate({ ...settings, goal: goal.id as UserSettings['goal'] })}
+                className={`py-2 px-1 text-[11px] font-black rounded-xl border-2 transition-all ${
+                  settings.goal === goal.id
+                  ? 'bg-red-50 text-red-500 border-red-200 shadow-sm'
+                  : 'bg-white text-gray-500 border-gray-100 hover:border-red-100'
+                }`}
+              >
+                {goal.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* トレーニング環境 */}
+        {settings.goal !== 'just_record' && (
+          <div className="space-y-2 col-span-2">
+            <label className="text-[11px] font-black text-gray-400 flex items-center gap-1.5 uppercase">
+              <Activity size={12} className="text-teal-400" /> Training Environment
+            </label>
+            <div className="flex gap-2">
+              {[
+                { id: 'home', label: '自宅 (Home)' },
+                { id: 'gym', label: 'ジム (Gym)' },
+                { id: 'none', label: '特になし' }
+              ].map(env => (
+                <button
+                  key={env.id}
+                  onClick={() => onUpdate({ ...settings, environment: env.id as UserSettings['environment'] })}
+                  className={`flex-1 py-2 text-xs font-black rounded-xl border-2 transition-all ${
+                    settings.environment === env.id
+                    ? 'bg-teal-50 text-teal-600 border-teal-200 shadow-sm'
+                    : 'bg-white text-gray-500 border-gray-100 hover:border-teal-100'
+                  }`}
+                >
+                  {env.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       
       <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-100/50 flex gap-3">
